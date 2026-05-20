@@ -62,7 +62,7 @@ export default async function HomePage({
 
         {/* Footer hint */}
         <p className="text-center text-xs text-gray-300">
-          Pas de compte requis · Pas de cookies · Open source
+          Pas de compte requis · Pas de cookies · Open source · Fait par Nils QUINTOWN
         </p>
       </div>
     </main>
