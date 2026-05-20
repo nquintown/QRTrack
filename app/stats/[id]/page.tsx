@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { headers } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import CopyButton from '@/components/CopyButton'
+import ScanChart from '@/components/ScanChart'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,6 +28,28 @@ export default async function StatsPage({
     baseUrl = `${proto}://${host}`
   }
   const trackingUrl = `${baseUrl}/q/${qr.shortId}`
+
+  // Build last 24h hourly buckets (server-side, no serialization issues)
+  const now = new Date()
+  const hourlyData = Array.from({ length: 24 }, (_, i) => {
+    const bucketStart = new Date(now)
+    bucketStart.setHours(now.getHours() - (23 - i), 0, 0, 0)
+    bucketStart.setMinutes(0, 0, 0)
+    const bucketEnd = new Date(bucketStart)
+    bucketEnd.setHours(bucketStart.getHours() + 1)
+
+    const count = qr.scans.filter(scan => {
+      const d = new Date(scan.scannedAt)
+      return d >= bucketStart && d < bucketEnd
+    }).length
+
+    const h = bucketStart.getHours()
+    return {
+      label: `${h}h`,
+      fullLabel: `${bucketStart.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })} · ${h}h–${h + 1}h`,
+      count,
+    }
+  })
 
   return (
     <main className="min-h-screen bg-[#f5f6f7] font-sans">
@@ -80,6 +103,12 @@ export default async function StatsPage({
             <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2">URL de tracking</p>
             <p className="text-sm font-mono text-gray-700 break-all">{trackingUrl}</p>
           </div>
+        </div>
+
+        {/* Scan chart */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-4">Scans par heure · 24 dernières heures</p>
+          <ScanChart data={hourlyData} />
         </div>
 
         {/* Tracking URL */}
