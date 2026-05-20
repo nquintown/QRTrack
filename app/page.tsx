@@ -2,7 +2,13 @@ import { headers } from 'next/headers'
 import QrForm from '@/components/QrForm'
 import HeroLottie from '@/components/HeroLottie'
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
+
   let baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   if (!baseUrl) {
     const headersList = await headers()
@@ -20,6 +26,22 @@ export default async function HomePage() {
       </nav>
 
       <div className="max-w-xl mx-auto px-4 py-16 space-y-8">
+
+        {error && (
+          <div className="bg-red-50 border border-red-100 rounded-2xl px-5 py-4 flex items-start gap-3">
+            <span className="text-red-400 mt-0.5">⚠️</span>
+            <div>
+              <p className="text-sm font-semibold text-red-700">
+                {error === 'notfound' ? 'QR code introuvable' : 'Erreur de connexion'}
+              </p>
+              <p className="text-xs text-red-400 mt-0.5">
+                {error === 'notfound'
+                  ? 'Ce QR code n\'existe pas ou a été créé sur un autre environnement.'
+                  : 'Impossible de contacter la base de données. Réessayez dans quelques instants.'}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Hero */}
         <div className="text-center space-y-3">
