@@ -88,7 +88,6 @@ export default async function StatsPage({
 
         {/* Scan chart */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-4">Scans par heure · 24 dernières heures</p>
           <ScanChart scanTimestamps={scanTimestamps} />
         </div>
 
