@@ -29,9 +29,15 @@ export default function QrForm({ baseUrl }: { baseUrl: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: url.trim() }),
       })
-      const data = await res.json()
+      const text = await res.text()
+      let data: { id?: string; error?: string }
+      try {
+        data = JSON.parse(text)
+      } catch {
+        throw new Error(`Erreur serveur (${res.status})`)
+      }
       if (!res.ok) throw new Error(data.error ?? 'Erreur serveur')
-      setShortId(data.id)
+      setShortId(data.id!)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue')
     } finally {
