@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: 'QRTrack — QR codes avec statistiques de scans',
   description:
     'Créez des QR codes traçables et consultez le nombre de scans en temps réel.',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
