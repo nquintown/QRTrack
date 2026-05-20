@@ -1,7 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://qr-track-nu.vercel.app'
+
+function redirect(url: string, status = 302) {
+  return new Response(null, { status, headers: { Location: url } })
+}
 
 export async function GET(
   req: NextRequest,
@@ -13,21 +17,21 @@ export async function GET(
   try {
     qr = await prisma.qrCode.findUnique({ where: { shortId: id } })
   } catch (e) {
-    console.error('[QRTrack] DB error:', e)
-    return NextResponse.redirect(`${baseUrl}/?error=db`, { status: 302 })
+    console.error('[QRTrack] DB error on scan:', e)
+    return redirect(`${baseUrl}/?error=db`)
   }
 
   if (!qr) {
-    return NextResponse.redirect(`${baseUrl}/?error=notfound`, { status: 302 })
+    return redirect(`${baseUrl}/?error=notfound`)
   }
 
-  // Record scan (non-blocking — don't let it fail the redirect)
+  // Record scan — fire and forget, never blocks the redirect
   prisma.scan.create({
     data: {
       qrCodeId: qr.id,
       userAgent: req.headers.get('user-agent') ?? undefined,
     },
-  }).catch((e) => console.error('[QRTrack] Scan write error:', e))
+  }).catch((e) => console.error('[QRTrack] Scan write failed:', e))
 
-  return NextResponse.redirect(qr.originalUrl, { status: 302 })
+  return redirect(qr.originalUrl)
 }
