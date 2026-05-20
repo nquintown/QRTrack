@@ -6,6 +6,7 @@ import CopyButton from '@/components/CopyButton'
 import ScanChart from '@/components/ScanChart'
 import ScanTime from '@/components/ScanTime'
 import EditUrlForm from '@/components/EditUrlForm'
+import DownloadQr from '@/components/DownloadQr'
 
 export const dynamic = 'force-dynamic'
 
@@ -101,6 +102,11 @@ export default async function StatsPage({
             <span className="text-sm font-mono text-gray-700 flex-1 break-all">{trackingUrl}</span>
             <CopyButton text={trackingUrl} />
           </div>
+        </div>
+
+        {/* Download QR */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <DownloadQr shortId={qr.shortId} trackingUrl={trackingUrl} />
         </div>
 
         {/* Scan history */}
