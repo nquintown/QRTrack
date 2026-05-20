@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import { prisma } from '@/lib/prisma'
 import CopyButton from '@/components/CopyButton'
 import ScanChart from '@/components/ScanChart'
+import ScanTime from '@/components/ScanTime'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,11 +73,7 @@ export default async function StatsPage({
             <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2">Dernier scan</p>
             <p className="text-lg font-semibold text-gray-900">
               {qr.scans.length > 0
-                ? new Date(qr.scans[0].scannedAt).toLocaleDateString('fr-FR', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                  })
+                ? <ScanTime iso={qr.scans[0].scannedAt.toISOString()} />
                 : '—'}
             </p>
           </div>
@@ -117,17 +114,7 @@ export default async function StatsPage({
                     <span className="text-xs text-gray-300 w-6 text-right">#{qr.scans.length - i}</span>
                     <div>
                       <p className="text-sm font-medium text-gray-800">
-                        {new Date(scan.scannedAt).toLocaleDateString('fr-FR', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        })}{' '}
-                        <span className="text-gray-400 font-normal">
-                          {new Date(scan.scannedAt).toLocaleTimeString('fr-FR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
+                        <ScanTime iso={scan.scannedAt.toISOString()} />
                       </p>
                       {scan.userAgent && (
                         <p className="text-xs text-gray-400 mt-0.5 truncate max-w-sm">{scan.userAgent}</p>
