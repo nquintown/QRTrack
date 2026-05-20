@@ -7,7 +7,10 @@ export default function RedirectPage() {
   const { id } = useParams<{ id: string }>()
 
   useEffect(() => {
-    fetch(`/api/redirect/${id}`)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 8000) // 8s max
+
+    fetch(`/api/redirect/${id}`, { signal: controller.signal })
       .then(r => r.json())
       .then(data => {
         if (data.url) {
@@ -19,6 +22,7 @@ export default function RedirectPage() {
       .catch(() => {
         window.location.href = '/?error=db'
       })
+      .finally(() => clearTimeout(timeout))
   }, [id])
 
   return (
