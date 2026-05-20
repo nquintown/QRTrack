@@ -66,16 +66,14 @@ export default function QrDisplay({ shortId, baseUrl }: QrDisplayProps) {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleDownload('black')}
-              className="flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-xl px-4 py-3 transition-colors"
+              className="bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-xl px-4 py-3 transition-colors text-center"
             >
-              <DownloadIcon />
               Noir transparent
             </button>
             <button
               onClick={() => handleDownload('white')}
-              className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 text-sm font-medium rounded-xl px-4 py-3 border border-gray-200 transition-colors"
+              className="bg-white hover:bg-gray-50 text-gray-800 text-sm font-medium rounded-xl px-4 py-3 border border-gray-200 transition-colors text-center"
             >
-              <DownloadIcon />
               Blanc transparent
             </button>
           </div>
