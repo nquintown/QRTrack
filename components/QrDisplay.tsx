@@ -23,14 +23,27 @@ export default function QrDisplay({ shortId, baseUrl }: QrDisplayProps) {
     })
   }, [trackingUrl])
 
-  function handleDownload() {
-    const canvas = canvasRef.current
-    if (!canvas) return
+  async function handleDownload(variant: 'black' | 'white') {
+    const offscreen = document.createElement('canvas')
+    await QRCode.toCanvas(offscreen, trackingUrl, {
+      width: 512,
+      margin: 2,
+      color: {
+        dark: variant === 'black' ? '#111827' : '#ffffff',
+        light: '#00000000', // transparent background
+      },
+    })
     const link = document.createElement('a')
-    link.download = `qrtrack-${shortId}.png`
-    link.href = canvas.toDataURL('image/png')
+    link.download = `qrtrack-${shortId}-${variant}.png`
+    link.href = offscreen.toDataURL('image/png')
     link.click()
   }
+
+  const DownloadIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+      <path d="M8 1v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-8 flex flex-col items-center gap-6">
@@ -47,28 +60,38 @@ export default function QrDisplay({ shortId, baseUrl }: QrDisplayProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={handleDownload}
-            className="flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-xl px-4 py-3 transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 1v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Télécharger PNG
-          </button>
-          <Link
-            href={`/stats/${shortId}`}
-            className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 text-sm font-medium rounded-xl px-4 py-3 border border-gray-200 transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="1" y="9" width="3" height="6" rx="1" fill="currentColor" />
-              <rect x="6" y="5" width="3" height="10" rx="1" fill="currentColor" />
-              <rect x="11" y="1" width="3" height="14" rx="1" fill="currentColor" />
-            </svg>
-            Voir les stats
-          </Link>
+        {/* Download row */}
+        <div>
+          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-1.5">Télécharger</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => handleDownload('black')}
+              className="flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-xl px-4 py-3 transition-colors"
+            >
+              <DownloadIcon />
+              Noir transparent
+            </button>
+            <button
+              onClick={() => handleDownload('white')}
+              className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 text-sm font-medium rounded-xl px-4 py-3 border border-gray-200 transition-colors"
+            >
+              <DownloadIcon />
+              Blanc transparent
+            </button>
+          </div>
         </div>
+
+        <Link
+          href={`/stats/${shortId}`}
+          className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-xl px-4 py-3 border border-gray-100 transition-colors w-full"
+        >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="9" width="3" height="6" rx="1" fill="currentColor" />
+            <rect x="6" y="5" width="3" height="10" rx="1" fill="currentColor" />
+            <rect x="11" y="1" width="3" height="14" rx="1" fill="currentColor" />
+          </svg>
+          Voir les statistiques
+        </Link>
       </div>
     </div>
   )
