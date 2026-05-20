@@ -29,27 +29,8 @@ export default async function StatsPage({
   }
   const trackingUrl = `${baseUrl}/q/${qr.shortId}`
 
-  // Build last 24h hourly buckets (server-side, no serialization issues)
-  const now = new Date()
-  const hourlyData = Array.from({ length: 24 }, (_, i) => {
-    const bucketStart = new Date(now)
-    bucketStart.setHours(now.getHours() - (23 - i), 0, 0, 0)
-    bucketStart.setMinutes(0, 0, 0)
-    const bucketEnd = new Date(bucketStart)
-    bucketEnd.setHours(bucketStart.getHours() + 1)
-
-    const count = qr.scans.filter(scan => {
-      const d = new Date(scan.scannedAt)
-      return d >= bucketStart && d < bucketEnd
-    }).length
-
-    const h = bucketStart.getHours()
-    return {
-      label: `${h}h`,
-      fullLabel: `${bucketStart.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })} · ${h}h–${h + 1}h`,
-      count,
-    }
-  })
+  // Pass raw ISO timestamps to ScanChart — buckets computed client-side for correct local timezone
+  const scanTimestamps = qr.scans.map(s => s.scannedAt.toISOString())
 
   return (
     <main className="min-h-screen bg-[#f5f6f7] font-sans">
@@ -108,7 +89,7 @@ export default async function StatsPage({
         {/* Scan chart */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-4">Scans par heure · 24 dernières heures</p>
-          <ScanChart data={hourlyData} />
+          <ScanChart scanTimestamps={scanTimestamps} />
         </div>
 
         {/* Tracking URL */}

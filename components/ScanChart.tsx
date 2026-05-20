@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell,
@@ -12,7 +13,7 @@ interface DataPoint {
 }
 
 interface ScanChartProps {
-  data: DataPoint[]
+  scanTimestamps: string[] // ISO strings from server — buckets computed client-side for correct timezone
 }
 
 function CustomTooltip({ active, payload, label }: any) {
@@ -35,7 +36,33 @@ function CustomTooltip({ active, payload, label }: any) {
   )
 }
 
-export default function ScanChart({ data }: ScanChartProps) {
+export default function ScanChart({ scanTimestamps }: ScanChartProps) {
+  const [data, setData] = useState<DataPoint[]>([])
+
+  useEffect(() => {
+    // Runs in the browser → new Date() uses the user's local timezone
+    const now = new Date()
+    const computed = Array.from({ length: 24 }, (_, i) => {
+      const bucketStart = new Date(now)
+      bucketStart.setHours(now.getHours() - (23 - i), 0, 0, 0)
+      const bucketEnd = new Date(bucketStart)
+      bucketEnd.setHours(bucketStart.getHours() + 1)
+
+      const count = scanTimestamps.filter(iso => {
+        const d = new Date(iso)
+        return d >= bucketStart && d < bucketEnd
+      }).length
+
+      const h = bucketStart.getHours()
+      return {
+        label: `${h}h`,
+        fullLabel: `${bucketStart.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })} · ${h}h–${h + 1}h`,
+        count,
+      }
+    })
+    setData(computed)
+  }, [scanTimestamps])
+
   const max = Math.max(...data.map(d => d.count), 1)
   const hasData = data.some(d => d.count > 0)
 
