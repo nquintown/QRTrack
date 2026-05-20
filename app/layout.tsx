@@ -6,8 +6,9 @@ export const metadata: Metadata = {
   description:
     'Créez des QR codes traçables et consultez le nombre de scans en temps réel.',
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
   },
 }
 

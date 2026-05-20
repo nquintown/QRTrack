@@ -29,7 +29,7 @@ export default async function StatsPage({
       {/* Nav */}
       <nav className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
         <Link href="/" className="flex items-center gap-2 text-gray-900 hover:opacity-70 transition-opacity">
-          <img src="/favicon.svg" alt="" width={28} height={28} />
+          <img src="/favicon.png" alt="" width={28} height={28} />
           <span className="font-semibold text-sm tracking-tight">QRTrack</span>
         </Link>
         <span className="text-gray-300">/</span>

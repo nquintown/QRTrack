@@ -12,7 +12,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-[#f5f6f7] font-sans">
       {/* Nav */}
       <nav className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-2">
-        <img src="/favicon.svg" alt="" width={28} height={28} />
+        <img src="/favicon.png" alt="" width={28} height={28} />
         <span className="font-semibold text-sm tracking-tight">QRTrack</span>
       </nav>
 
