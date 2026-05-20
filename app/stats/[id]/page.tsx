@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import CopyButton from '@/components/CopyButton'
 import ScanChart from '@/components/ScanChart'
 import ScanTime from '@/components/ScanTime'
+import EditUrlForm from '@/components/EditUrlForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,8 +50,13 @@ export default async function StatsPage({
 
         {/* Header card */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-1">QR Code</p>
-          <h1 className="text-2xl font-bold text-gray-900 break-all mb-1">{qr.originalUrl}</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase">QR Code</p>
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
+              ✦ Dynamique
+            </span>
+          </div>
+          <EditUrlForm shortId={qr.shortId} currentUrl={qr.originalUrl} />
           <p className="text-sm text-gray-400">
             Créé le{' '}
             {new Date(qr.createdAt).toLocaleDateString('fr-FR', {
