@@ -3,10 +3,13 @@ import QrForm from '@/components/QrForm'
 import HeroLottie from '@/components/HeroLottie'
 
 export default async function HomePage() {
-  const headersList = await headers()
-  const host = headersList.get('host') ?? 'localhost:3000'
-  const proto = host.startsWith('localhost') ? 'http' : 'https'
-  const baseUrl = `${proto}://${host}`
+  let baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  if (!baseUrl) {
+    const headersList = await headers()
+    const host = headersList.get('host') ?? 'localhost:3000'
+    const proto = host.startsWith('localhost') ? 'http' : 'https'
+    baseUrl = `${proto}://${host}`
+  }
 
   return (
     <main className="min-h-screen bg-[#f5f6f7] font-sans">

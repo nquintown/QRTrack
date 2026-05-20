@@ -19,10 +19,14 @@ export default async function StatsPage({
 
   if (!qr) notFound()
 
-  const headersList = await headers()
-  const host = headersList.get('host') ?? 'localhost:3000'
-  const proto = host.startsWith('localhost') ? 'http' : 'https'
-  const trackingUrl = `${proto}://${host}/q/${qr.shortId}`
+  let baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  if (!baseUrl) {
+    const headersList = await headers()
+    const host = headersList.get('host') ?? 'localhost:3000'
+    const proto = host.startsWith('localhost') ? 'http' : 'https'
+    baseUrl = `${proto}://${host}`
+  }
+  const trackingUrl = `${baseUrl}/q/${qr.shortId}`
 
   return (
     <main className="min-h-screen bg-[#f5f6f7] font-sans">
@@ -74,7 +78,7 @@ export default async function StatsPage({
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-2">URL de tracking</p>
-            <p className="text-sm font-mono text-gray-700 break-all">/q/{qr.shortId}</p>
+            <p className="text-sm font-mono text-gray-700 break-all">{trackingUrl}</p>
           </div>
         </div>
 
